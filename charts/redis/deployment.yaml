@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-deployment
+  labels:
+    app: redis-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis-app
+  template:
+    metadata:
+      labels:
+        app: redis-app
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: redis
+          image: redis:latest
+          imagePullPolicy: Always
+          command:
+            - "redis-server"
+            - "--requirepass redispass"
+          resources:
+            requests:
+              cpu: 1000m
+              memory: 1Gi
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+          volumeMounts:
+            - name: redis-vol
+              mountPath: /data
+              readOnly: false
+      volumes:
+      - name: redis-vol
+        awsElasticBlockStore:
+          volumeID: ${AWS_EBS_ID}
+---
