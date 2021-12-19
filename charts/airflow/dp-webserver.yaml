@@ -23,10 +23,10 @@ spec:
             value: "CeleryExecutor"
 
           - name: AIRFLOW__CORE__SQL_ALCHEMY_CONN
-            value: "postgresql+psycopg2://airflow:airflow@postgre-service/airflow"
+            value: "postgresql+psycopg2://airflow:airflow@postgres-service/airflow"
 
           - name: AIRFLOW__CELERY__RESULT_BACKEND
-            value: "db+postgresql://airflow:airflow@postgre-service/airflow"
+            value: "db+postgresql://airflow:airflow@postgres-service/airflow"
 
           - name: AIRFLOW__CELERY__BROKER_URL
             value: "redis://:@redis-service:6379/0"
