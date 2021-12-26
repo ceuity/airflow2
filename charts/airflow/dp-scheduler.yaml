@@ -21,4 +21,12 @@ spec:
         envFrom:
         - configMapRef:
             name: airflow-configmap
+        volumeMounts:
+        - name: airflow-test-dag
+          mountPath: /opt/airflow/dags/echo_test_dag.py
+          subPath: echo_test_dag.py
+      volumes:
+      - name: airflow-test-dag
+        configMap:
+          name: airflow-test-dag
 
