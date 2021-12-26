@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: airflow-dp-worker
+  labels:
+    app: airflow-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: airflow-worker
+  template:
+    metadata:
+      labels:
+        app: airflow-worker
+    spec:
+      containers:
+      - name: airflow-worker
+        image: apache/airflow:2.2.2
+        args: ["celery", "worker"]
+        envFrom:
+        - configMapRef:
+            name: airflow-configmap
+        volumeMounts:
+        - name: airflow-test-dag
+          mountPath: /opt/airflow/dags/echo_test_dag.py
+          subPath: echo_test_dag.py
+      volumes:
+      - name: airflow-test-dag
+        configMap:
+          name: airflow-test-dag
