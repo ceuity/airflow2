@@ -18,39 +18,15 @@ spec:
       - name: airflow-webserver
         image: apache/airflow:2.2.2
         args: ["webserver"]
-        env:
-          - name: AIRFLOW__CORE__EXECUTOR
-            value: "CeleryExecutor"
+        envFrom:
+        - configMapRef:
+            name: airflow-configmap
+        volumeMounts:
+        - name: airflow-test-dag
+          mountPath: /opt/airflow/dags/echo_test_dag.py
+          subPath: echo_test_dag.py
+      volumes:
+      - name: airflow-test-dag
+        configMap:
+          name: airflow-test-dag
 
-          - name: AIRFLOW__CORE__SQL_ALCHEMY_CONN
-            value: "postgresql+psycopg2://airflow:airflow@postgres-service/airflow"
-
-          - name: AIRFLOW__CELERY__RESULT_BACKEND
-            value: "db+postgresql://airflow:airflow@postgres-service/airflow"
-
-          - name: AIRFLOW__CELERY__BROKER_URL
-            value: "redis://:@redis-service:6379/0"
-
-          - name: AIRFLOW__CORE__FERNET_KEY
-            value: "LcPvHZY5yAXGSqPYhETaMJrLhaLJPQ2rd5b96p2OK1U="
-
-          - name: AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION
-            value: "true"
-
-          - name: AIRFLOW__CORE__LOAD_EXAMPLES
-            value: "false"
-
-          - name: AIRFLOW__API__AUTH_BACKEND
-            value: "airflow.api.auth.backend.basic_auth"
-
-          - name: _AIRFLOW_DB_UPGRADE
-            value: "true"
-
-          - name: _AIRFLOW_WWW_USER_CREATE
-            value: "true"
-
-          - name: _AIRFLOW_WWW_USER_USERNAME
-            value: "airflow"
-
-          - name: _AIRFLOW_WWW_USER_PASSWORD
-            value: "airflow"
