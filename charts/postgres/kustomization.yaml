@@ -5,4 +5,4 @@ resources:
 - service.yaml
 - deployment.yaml
 
-namespace: airflow-steach2
+namespace: airflow2
