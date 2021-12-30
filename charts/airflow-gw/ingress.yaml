@@ -8,9 +8,11 @@ metadata:
     nginx.ingress.kubernetes.io/use-regex: "true"
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
     nginx.ingress.kubernetes.io/enable-cors: "true"
+#  labels:
+#    app: airflow-ingress
 spec:
   rules:
-    - host: {HOST_URI}
+    - host: {AIRFLOW_SERVICE_URI}
       http:
         paths:
         - pathType: Prefix
@@ -20,4 +22,13 @@ spec:
               name: airflow-svc-webserver
               port:
                 number: 8080
-
+    - host: {FLOWER_SERVICE_URI}
+      http:
+        paths:
+        - pathType: Prefix
+          path: "/"
+          backend:
+            service:
+              name: airflow-svc-flower
+              port:
+                number: 5555
