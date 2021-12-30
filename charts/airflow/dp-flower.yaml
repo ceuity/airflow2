@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: airflow-dp-flower
+  labels:
+    app: airflow-flower
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: airflow-flower
+  template:
+    metadata:
+      labels:
+        app: airflow-flower
+    spec:
+      containers:
+      - name: airflow-flower
+        image: apache/airflow:2.2.2
+        args: ["celery", "flower"]
+        envFrom:
+        - configMapRef:
+            name: airflow-configmap
