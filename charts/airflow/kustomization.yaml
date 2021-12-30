@@ -6,7 +6,9 @@ resources:
   - dp-webserver.yaml
   - dp-scheduler.yaml
   - dp-worker.yaml
+  - dp-flower.yaml
   - svc-webserver.yaml
+  - svc-flower.yaml
 
 namespace: airflow2
 
