@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: airflow-sa
+  namespace: airflow2
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: airflow2-cr
+rules:
+  - apiGroups: [""]
+    resources: ["deployments", "pods", "pods/log", "pods/exec", "persistentvolumeclaims"]
+    verbs: ["*"]
+  - apiGroups: [""]
+    resources: ["endpoints"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: airflow2-crb
+subjects:
+  - kind: ServiceAccount
+    name: airflow2-sa
+    namespace: airflow2
+roleRef:
+  kind: ClusterRole
+  name: airflow2-cr
+  apiGroup: rbac.authorization.k8s.io

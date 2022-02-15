@@ -1,31 +1,59 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: airflow-dp-worker
+  name: airflow2-dp-worker
   labels:
-    app: airflow-worker
+    app: airflow2-worker
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: airflow-worker
+      app: airflow2-worker
   template:
     metadata:
       labels:
-        app: airflow-worker
+        app: airflow2-worker
     spec:
+      serviceAccount: airflow2-sa
       containers:
-      - name: airflow-worker
+      - name: airflow2-worker
         image: apache/airflow:2.2.2
         args: ["celery", "worker"]
+        resources:
+          requests:
+            cpu: 1000m
+            memory: 2Gi
+          limits:
+            cpu: 1000m
+            memory: 2Gi
         envFrom:
         - configMapRef:
             name: airflow-configmap
         volumeMounts:
-        - name: airflow-test-dag
-          mountPath: /opt/airflow/dags/echo_test_dag.py
-          subPath: echo_test_dag.py
+        - name: aws-credential
+          mountPath: {AWS_SECRET_PATH}
+          readOnly: true
+        - name: airflow-secret-google-test
+          mountPath: {GOOGLE_SECRET_PATH}
+          readOnly: true
+        - name: airflow-pvc-log
+          mountPath: /home/airflow/logs
+          readOnly: false
+        - name: airflow-pvc-dag
+          mountPath: /home/dags
+          readOnly: false
       volumes:
-      - name: airflow-test-dag
-        configMap:
-          name: airflow-test-dag
+      - name: aws-credential
+        secret:
+          secretName: aws-k8s-userspace
+          defaultMode: 0644
+      - name: airflow-secret-google
+        secret:
+          secretName: airflow-secret-google
+          defaultMode: 0644
+      - name: airflow-pvc-dag
+        persistentVolumeClaim:
+          claimName: airflow-pvc-dag
+      - name: airflow-pvc-log
+        persistentVolumeClaim:
+          claimName: airflow-pvc-log

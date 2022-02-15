@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: airflow-svc-webserver
+  name: airflow2-svc-webserver
 spec:
   type: ClusterIP
   selector:
-    app: airflow-webserver
+    app: airflow2-webserver
   ports:
     - name: webserver-port
       protocol: TCP

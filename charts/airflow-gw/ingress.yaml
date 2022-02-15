@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: airflow-ingress
+  name: airflow2-ingress
   annotations:
     kubernetes.io/ingress.class: "nginx"
     nginx.ingress.kubernetes.io/proxy-body-size: "100m"
@@ -12,23 +12,23 @@ metadata:
 #    app: airflow-ingress
 spec:
   rules:
-    - host: {AIRFLOW_SERVICE_URI}
+    - host: {AIRFLOW_HOST_URL}
       http:
         paths:
         - pathType: Prefix
           path: "/"
           backend:
             service:
-              name: airflow-svc-webserver
+              name: airflow2-svc-webserver
               port:
                 number: 8080
-    - host: {FLOWER_SERVICE_URI}
+    - host: {FLOWER_HOST_URL}
       http:
         paths:
         - pathType: Prefix
           path: "/"
           backend:
             service:
-              name: airflow-svc-flower
+              name: airflow2-svc-flower
               port:
                 number: 5555

@@ -1,23 +1,30 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: airflow-dp-flower
+  name: airflow2-dp-flower
   labels:
-    app: airflow-flower
+    app: airflow2-flower
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: airflow-flower
+      app: airflow2-flower
   template:
     metadata:
       labels:
-        app: airflow-flower
+        app: airflow2-flower
     spec:
       containers:
-      - name: airflow-flower
+      - name: airflow2-flower
         image: apache/airflow:2.2.2
         args: ["celery", "flower"]
+        resources:
+          requests:
+            cpu: 200m
+            memory: 1Gi
+          limits:
+            cpu: 200m
+            memory: 1Gi
         envFrom:
         - configMapRef:
             name: airflow-configmap

@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: airflow2-dp-gitsync
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: airflow2-gitsync
+  template:
+    metadata:
+      labels:
+        app: airflow2-gitsync
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: git-sync
+          image: k8s.gcr.io/git-sync/git-sync:v3.3.2
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: 200m
+              memory: 200Mi
+            limits:
+              cpu: 200m
+              memory: 200Mi
+          env:
+            - name: GIT_SYNC_REPO
+              value: {GIT_SSH_REPO}
+            - name: GIT_SYNC_BRANCH
+              value: {GIT_BRANCH}
+            - name: GIT_SYNC_ROOT
+              value: "/tmp/gitsync"
+            - name: GIT_SYNC_DEST
+              value: "airflow2"
+          volumeMounts:
+            - name: airflow-pvc-dag
+              mountPath: /tmp/gitsync
+              readOnly: false
+            - name: airflow-secret-gitkey
+              mountPath: /tmp/.ssh
+              readOnly: false
+      volumes:
+        - name: airflow-pvc-dag
+          persistentVolumeClaim:
+            claimName: airflow-pvc-dag
+        - name: airflow-secret-gitkey
+          secret:
+            secretName: airflow-secret-gitkey
+            defaultMode: 0600
+      securityContext:
+        fsGroup: 65533 # to make SSH key readable
+---

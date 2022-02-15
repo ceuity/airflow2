@@ -1,32 +1,44 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: airflow-dp-scheduler
+  name: airflow2-dp-scheduler
   labels:
-    app: airflow-scheduler
+    app: airflow2-scheduler
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: airflow-scheduler
+      app: airflow2-scheduler
   template:
     metadata:
       labels:
-        app: airflow-scheduler
+        app: airflow2-scheduler
     spec:
       containers:
-      - name: airflow-scheduler
+      - name: airflow2-scheduler
         image: apache/airflow:2.2.2
         args: ["scheduler"]
+        resources:
+          requests:
+            cpu: 500m
+            memory: 1Gi
+          limits:
+            cpu: 500m
+            memory: 1Gi
         envFrom:
         - configMapRef:
             name: airflow-configmap
         volumeMounts:
-        - name: airflow-test-dag
-          mountPath: /opt/airflow/dags/echo_test_dag.py
-          subPath: echo_test_dag.py
+        - name: airflow-pvc-log
+          mountPath: /home/airflow/logs
+          readOnly: false
+        - name: airflow-pvc-dag
+          mountPath: /home/dags
+          readOnly: false
       volumes:
-      - name: airflow-test-dag
-        configMap:
-          name: airflow-test-dag
-
+      - name: airflow-pvc-dag
+        persistentVolumeClaim:
+          claimName: airflow-pvc-dag
+      - name: airflow-pvc-log
+        persistentVolumeClaim:
+          claimName: airflow-pvc-log
