@@ -1,0 +1,7 @@
+dags/*
+logs/*
+temp/*
+plugins/*
+steach-test/*
+train-test/*
+*/secret/*
