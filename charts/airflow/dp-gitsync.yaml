@@ -15,7 +15,7 @@ spec:
       restartPolicy: Always
       containers:
         - name: git-sync
-          image: k8s.gcr.io/git-sync/git-sync:v3.3.2
+          image: k8s.gcr.io/git-sync/git-sync:v3.6.9
           imagePullPolicy: IfNotPresent
           resources:
             requests:

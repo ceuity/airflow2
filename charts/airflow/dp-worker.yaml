@@ -17,7 +17,7 @@ spec:
       serviceAccount: airflow2-sa
       containers:
       - name: airflow2-worker
-        image: apache/airflow:2.2.2
+        image: apache/airflow:2.8.2-python3.11
         args: ["celery", "worker"]
         resources:
           requests:
@@ -40,7 +40,7 @@ spec:
           mountPath: /home/airflow/logs
           readOnly: false
         - name: airflow-pvc-dag
-          mountPath: /home/dags
+          mountPath: /home/airflow/dags
           readOnly: false
       volumes:
       - name: aws-credential

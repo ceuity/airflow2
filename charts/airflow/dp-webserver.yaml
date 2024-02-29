@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: airflow2-webserver
-        image: apache/airflow:2.2.2
+        image: apache/airflow:2.8.2-python3.11
         args: ["webserver"]
         resources:
           requests:
@@ -43,7 +43,7 @@ spec:
           mountPath: /home/airflow/logs
           readOnly: false
         - name: airflow-pvc-dag
-          mountPath: /home/dags
+          mountPath: /home/airflow/dags
           readOnly: false
       volumes:
       - name: airflow-pvc-dag

@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: airflow2-scheduler
-        image: apache/airflow:2.2.2
+        image: apache/airflow:2.8.2-python3.11
         args: ["scheduler"]
         resources:
           requests:
@@ -33,7 +33,7 @@ spec:
           mountPath: /home/airflow/logs
           readOnly: false
         - name: airflow-pvc-dag
-          mountPath: /home/dags
+          mountPath: /home/airflow/dags
           readOnly: false
       volumes:
       - name: airflow-pvc-dag

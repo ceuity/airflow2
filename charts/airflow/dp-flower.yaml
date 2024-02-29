@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: airflow2-flower
-        image: apache/airflow:2.2.2
+        image: apache/airflow:2.8.2-python3.11
         args: ["celery", "flower"]
         resources:
           requests:
