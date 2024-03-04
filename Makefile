@@ -3,21 +3,21 @@ NAMESPACE := airflow2
 .PHONY: init up down logs clear events apply pod pf webserver worker scheduler git sync gitkey build
 
 init:
-	@docker-compose up airflow-init
+	@docker compose up airflow-init
 
 up:
-	@docker-compose up -d
+	@docker compose --profile flower up -d
 
 down:
-	@docker-compose down
+	@docker compose --profile flower down
 
 logs:
-	@docker-compose logs -f
+	@docker compose logs -f
 
 clear:
-	@docker-compose down --volumes --remove-orphans
-	@find . -name __pycache__ -type d -exec rm -rf {} \;
-	@rm -r logs/*
+	@docker compose --profile flower down --volumes --remove-orphans
+	@find . -type d -name "__pycache__" -exec rm -rf {} +
+	@rm -rf logs/* | echo
 
 events:
 	@kubectl get events -n $(NAMESPACE)
