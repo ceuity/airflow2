@@ -15,6 +15,7 @@ from airflow.operators.bash import BashOperator
 from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
 from airflow.providers.cncf.kubernetes.secret import Secret
 from kubernetes.client import models as k8s
+from common.callback import success_callback
 
 logger = logging.getLogger("airflow.task")
 image = "python:3.11.8-bookworm"
@@ -24,8 +25,8 @@ config_file = os.environ.get("KPO_CONFIG_PATH", "/home/airflow/.kube/config")
 
 default_args = {
     "owner": "ceuity",
-    "depends_on_past": True,
-    "wait_for_downstream": True,
+    "depends_on_past": False,
+    "wait_for_downstream": False,
     "start_date": pendulum.today("Asia/Seoul").add(days=-1),
     "email": ["everland7942@gmail.com"],
     "email_on_failure": False,
@@ -39,7 +40,7 @@ default_args = {
     # 'sla': timedelta(hours=2),
     # 'execution_timeout': timedelta(seconds=300),
     # 'on_failure_callback': some_function,
-    # 'on_success_callback': some_other_function,
+    "on_success_callback": success_callback,
     # 'on_retry_callback': another_function,
     # 'sla_miss_callback': yet_another_function,
     # 'trigger_rule': 'all_success'
@@ -79,14 +80,20 @@ task2 = KubernetesPodOperator(
     image=image,
     labels={"app": "airflow-app-k8s-test"},
     startup_timeout_seconds=1800,
-    cmds=["/bin/sh", "-c"],
-    arguments=["echo $HOME; " "echo {{ ds }} && " "sleep infinity"],
+    cmds=["/bin/bash", "-c"],
+    arguments=["echo $HOME; " "date; "
+               "echo {{ params.integer }}; "
+               "for (( i=0; i<15; i++ )); do "
+               "   echo $i; "
+               "   sleep 1; "
+               "done"
+    ],
     env_vars={
         "PYTHONUNBUFFERED": "1",
     },  # 스크립트 실행시, python 차원에서 로깅을 뱉지않는현상 해결.
     container_resources=k8s.V1ResourceRequirements(
-        requests={"cpu": "1", "memory": "1Gi"},
-        limits={"cpu": "1", "memory": "1Gi"},
+        requests={"cpu": "100m", "memory": "100Mi"},
+        limits={"cpu": "100m", "memory": "100Mi"},
     ),
     # secrets=[aws_credential, google_service_account_key, github_ssh_key],
     # volumes=volumes,

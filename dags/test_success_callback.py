@@ -30,11 +30,11 @@ default_args = {
     # 'end_date': datetime(2016, 1, 1),
     # 'sla': timedelta(hours=2),
     # 'execution_timeout': timedelta(seconds=300),
-    "on_success_callback": success_callback,
+    # "on_success_callback": success_callback,
     "on_failure_callback": failure_callback,
     # 'on_retry_callback': another_function,
     # 'sla_miss_callback': yet_another_function,
-    'trigger_rule': 'all_success'
+    "trigger_rule": "all_success",
 }
 
 
@@ -65,6 +65,7 @@ task3 = BashOperator(
         """,
     params={"my_param": "Parameter I passed in"},
     dag=dag,
+    on_success_callback=success_callback,
 )
 
 

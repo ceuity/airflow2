@@ -14,8 +14,8 @@ from airflow.operators.python import PythonOperator
 
 default_args = {
     "owner": "ceuity",
-    "depends_on_past": True,
-    "wait_for_downstream": True,
+    "depends_on_past": False,
+    "wait_for_downstream": False,
     "start_date": pendulum.today("Asia/Seoul").add(days=-1),
     "email": ["everland7942@gmail.com"],
     "email_on_failure": False,
@@ -59,13 +59,12 @@ task1 = BashOperator(
 task2 = BashOperator(
     task_id="task2",
     bash_command="""
-        {% for i in range(5) %}
-            echo "{{ ds }}"
-            echo "{{ macros.ds_add(ds, 7)}}"
-            echo "{{ params.my_param }}"
+        echo {{ params }};
+        {% for i in range(30) %}
+            date
+            sleep 1
         {% endfor %}
         """,
-    params={"my_param": "Parameter I passed in"},
     dag=dag,
 )
 
